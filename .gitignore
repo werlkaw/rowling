@@ -1,0 +1,5 @@
+# Don't include user data
+/data
+/statements
+/output
+/ignore

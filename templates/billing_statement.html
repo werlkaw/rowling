@@ -1,0 +1,161 @@
+<html>
+    <body>
+        <div style="text-align: center;background-color: gray;"><b>NOTIFICATION ONLY</b></div>
+        {{ date }}
+
+        <!-- Billing statement header. -->
+        <div style="text-align: center;">
+            2nd Quarter 2020<br>
+            Billing By Total Portfolio
+        </div>
+
+        <!-- Client Name and address -->
+        <div style="padding-left: 30px; padding-top: 50px;">
+            {{ portfolio.name }}<br>
+            {{ portfolio.address }}
+        </div>
+
+        <p>
+            Investment Advisory Fees for the Quarter beginning April 1, 2020
+        </p>
+
+        <p>
+            Portfolio Value as of March 23, 2020: &emsp;&emsp; {{ portfolio.value_as_currency() }}
+        </p>
+
+        {% if portfolio.billing_spec == 'ADVANCED STANDARD FEES' or portfolio.billing_spec == 'Advance - One Step Down' %}
+        <div style="padding-bottom: 50px;">
+        <table style="width: 100%; border-spacing: 0; text-align: center;">
+            <tr>
+                <td>Asset Range</td>
+                <td>Amount</td>
+                <td></td>
+                <td>Rate</td>
+                <td></td>
+                <td>Fee Amount</td>
+            </tr>
+            {% for billing_tier in portfolio.billing_tiers %}
+                {% if billing_tier.amount > 0 %}
+                    <tr>
+                        <td style="width:40%">
+                            <table style="width: 100%; text-align: center;">
+                                <tr>
+                                    <td style="width: 33%">{{ format_currency(billing_tier.asset_range[0]) }}</td>
+                                    <td style="width: 33%">-</td>
+                                    <td style="width: 33%">{{ format_currency(billing_tier.asset_range[1]) }}</td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>{{ format_currency(billing_tier.amount) }}</td>
+                        <td>x</td>
+                        <td>{{ billing_tier.rate }}</td>
+                        <td>=</td>
+                        <td>{{ format_currency(billing_tier.fee_amount) }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            <tr style="background-color: gray;">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><b>Total</b></td>
+                <td></td>
+                <td><b>{{ format_currency(portfolio.curr_fee) }}</b></td>
+            </tr>
+        </table>
+        </div>
+        {% elif portfolio.billing_spec == 'Advance - Over 5 Mil - Flat .60' %}
+        <div style="padding-bottom: 50px;">
+            <table style="width: 100%; border-spacing: 0; text-align: center;">
+                <tr>
+                    <td>Asset Range</td>
+                    <td>Amount</td>
+                    <td></td>
+                    <td>Rate</td>
+                    <td></td>
+                    <td>Fee Amount</td>
+                </tr>
+                <tr>
+                    <td style="width:40%">
+                        <table style="width: 100%; text-align: center;">
+                            <tr>
+                                <td style="width: 33%">{{ format_currency(0) }}</td>
+                                <td style="width: 33%">-</td>
+                                <td style="width: 33%">{{ format_currency(portfolio.value) }}</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>{{ format_currency(portfolio.value) }}</td>
+                    <td>x</td>
+                    <td>{{ 0.0015 }}</td>
+                    <td>=</td>
+                    <td>{{ format_currency(portfolio.curr_fee) }}</td>
+                </tr>
+                <tr style="background-color: gray;">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><b>Total</b></td>
+                    <td></td>
+                    <td><b>{{ format_currency(portfolio.curr_fee) }}</b></td>
+                </tr>
+            </table>
+            </div>
+        {% endif %}
+
+        {% if portfolio.min_fee_applies() %}
+        <div style="padding-bottom: 50px;">
+            Your calculated fee was less than your minimum fee. You will be charged: {{ format_currency(portfolio.min_fee()) }}
+        </div>
+        {% endif %}
+
+        <table style="width: 100%;">
+            <tr>
+                <td>Name</td>
+                <td>Account Type</td>
+                <td>Account</td>
+                <td>Billing Account</td>
+                <td>Portfolio Value</td>
+                <td>Bill Amount</td>
+            </tr>
+        {% for account in portfolio.accounts %}
+            <tr>
+                <td>{{ account.name }}</td>
+                <td>{{ account.account_type }}</td>
+                <td>{{ account.account_number }}</td>
+                <td>{{ account.billing_account }}</td>
+                <td>{{ account.value_as_currency() }}</td>
+                <td>{{ account.amount_to_bill() }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+        <p>
+            Fee Basis: Advance
+        </p>
+
+        <p>
+            <b>THIS IS NOT A BILL. We will bill your Charles Schwab account(s) for the above amounts.</b>
+        </p>
+
+        <p>
+            Charles Schwab & Co., Inc. does not verify the accuracy of the advisor's billing. The client should review the advisor's fee
+            calculations and notify the advisor if they believe an error has been made.
+        </p>
+
+        {% if portfolio.min_fee_applies() %}
+        <p>
+            Client accounts are subject to a minimum quarterly fee that is reset at the beginning of each year. The minimum fees are updated each quarter to account for client withdrawals and deposits during the most recent quarter. The minimum fee calculation can be found on our Form ADV2A found here: https://www.rowling.com/legal-information/.
+        </p>
+        {% endif %}
+
+        <p>
+            Please contact Sheryl L. Rowling if there are any changes in your financial situation or investment objectives, or if you wish
+            to impose, add or modify any reasonable restrictions to the management of your account. Our current disclosure statement is
+            set forth on ADV Part 2 and is available for your review upon request.
+        </p>
+
+        <p>
+            Thank you. Look for us on the web at www.rowling.com.
+        </p>
+    </body>
+</html>
